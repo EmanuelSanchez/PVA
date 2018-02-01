@@ -1,0 +1,11 @@
+// presentations
+*.pdf
+*.pptx
+
+// images
+*.png
+*.jpg
+*.JPG
+
+// points cloud
+*.pcd
