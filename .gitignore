@@ -9,3 +9,6 @@
 
 // points cloud
 *.pcd
+
+// backup files
+.bck

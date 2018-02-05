@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
-from printColors import printHeader, printSubHeader, printWarning, printOK, printFail
+# from printColors import printHeader, printSubHeader, printWarning, printOK, printFail
 
 plt.ion()
 
@@ -33,7 +33,7 @@ while True:
     im2GRAY = cv2.cvtColor(im2, cv2.COLOR_BGR2GRAY)
 
     # Detect features with:
-    fast = cv2.FastFeatureDetector_create(threshold=120, nonmaxSuppression=True)
+    fast = cv2.FastFeatureDetector_create(threshold=50, nonmaxSuppression=True)
     im1KPts = fast.detect(im1GRAY, None)
 
     # Draw keypoints
@@ -70,10 +70,10 @@ while True:
 
     t[2] = abs(t[2])
 
-    printHeader('Translation:')
-    print('%s' % str(t))
-    printSubHeader('Rotation:')
-    print('%s' % str(R))
+    # printHeader('Translation:')
+    # print('%s' % str(t))
+    # printSubHeader('Rotation:')
+    # print('%s' % str(R))
 
     # Display the figures
     plt.figure(1)
@@ -111,6 +111,6 @@ while True:
     plt.legend()
 
     plt.draw()
-    plt.waitforbuttonpress(0.01)
+    plt.waitforbuttonpress(0.001)
 
     fIdx += 1

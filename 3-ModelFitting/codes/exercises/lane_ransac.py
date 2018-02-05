@@ -37,22 +37,54 @@ while True:
     y0 = ey
     x0 = ex
 
-    # Do the ransac,
-    Titer = 100
-    lines = np.zeros((0, 4))  # Fill that with the lines (x1, y1) (x2, y2) detected
-    for i in range(Titer):
-        # FILL HERE
-        # FILL HERE
-        # FILL HERE
 
-        y1, x1, y2, x2 = 0, 0, 0, 0
-        displayLineModel(x0, y0, x1, y1, x2, y2, 'r')
-        # plt.waitforbuttonpress()
+    # plt.imshow(tophat)
+    # plt.waitforbuttonpress()  # Wait for a button (click, key) to be pressed
+
+#------------------------------------------------------------------------------
+    # ordering the data into a matrix with 2 columns [Yn, Xn]
+    data = np.column_stack((y0, x0))
+
+    # Do the ransac,
+
+    n = 2           # number of samples
+    Titer = 100     # number of iterations
+    threshold = 0.5   # threshold to identify a point that fits well
+    d = 30         # number of nearby points required to assert that model fits
+    lines = np.zeros((0, 4))  # Fill that with the lines (x1, y1) (x2, y2) detected
+
+    for i in range(Titer):
+        # gets random indexes to sample (2 points)
+        indexes = np.random.randint(0, data.shape[0], n)
+        # sample the data with the indexes calculated
+        sample = data[indexes]
+        y1, x1, y2, x2 = sample[0][0], sample[0][1], sample[1][0], sample[1][1]
+        # fit line
+        try:
+            m = (y1 - y2) / (x1 - x2)
+        except ZeroDivisionError:
+            continue
+        b = y1 - m * x1
+        # distance of points to line
+        dist = np.abs(m*x0-y0+b)/np.sqrt(m**2 + 1)
+        # finds inliers. selects the points by thresholdding
+        inliers = dist[dist <= threshold]
+        # finds the best line
+        if (inliers.shape[0] >= d):
+            lines = np.row_stack((lines, [y1, x1, y2, x2]))
+            # print(data.shape)
+            # print("\nNumber of inliers: ", inliers.shape[0])
+            # print("\nInliers: ")
+            # print(inliers)
+            # displayLineModel(x0, y0, x1, y1, x2, y2, 'r')
+            # plt.waitforbuttonpress()
+#------------------------------------------------------------------------------
 
     # Display the lines
     plt.figure(1)
     plt.clf()
     plt.imshow(imBGR[..., ::-1]//2)
+    # plt.imshow(tophat[..., ::-1]//2)
     plt.scatter(x0, y0, color='r', s=1)
     # plt.scatter(x0[bestModelInliersMask], y0[bestModelInliersMask], c='r')
     for i in range(len(lines)):
@@ -62,6 +94,6 @@ while True:
     plt.ylim(imBGR.shape[0], 0)
 
     # Use either of the following functions:
-    plt.waitforbuttonpress()  # Wait for a button (click, key) to be pressed
+    # plt.waitforbuttonpress()  # Wait for a button (click, key) to be pressed
     frameIdx += 1
-    # plt.waitforbuttonpress()  # Pause for 0.02 second. Useful to get an animation
+    plt.waitforbuttonpress(0.02)  # Pause for 0.02 second. Useful to get an animation
